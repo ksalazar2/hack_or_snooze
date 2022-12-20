@@ -73,8 +73,23 @@ class StoryList {
    * Returns the new Story instance
    */
 
-  async addStory( /* user, newStory */) {
-    // UNIMPLEMENTED: complete this function!
+  async addStory(user, newStory) {
+    let res = await axios({
+      method: "POST",
+      url: `${BASE_URL}/stories`,
+      data: {
+        token: user.loginToken,
+        story: {
+          title: newStory.title,
+          author: newStory.author,
+          url: newStory.url
+        }
+      },
+    }
+    );
+    let storyInst = new Story(res.data.story);
+    this.stories.unshift(storyInst);
+    return storyInst;
   }
 }
 
@@ -90,13 +105,13 @@ class User {
    */
 
   constructor({
-                username,
-                name,
-                createdAt,
-                favorites = [],
-                ownStories = []
-              },
-              token) {
+    username,
+    name,
+    createdAt,
+    favorites = [],
+    ownStories = []
+  },
+    token) {
     this.username = username;
     this.name = name;
     this.createdAt = createdAt;
@@ -150,7 +165,7 @@ class User {
       data: { user: { username, password } },
     });
 
-    let { user } = response.data;
+    let { user } = response.data; // does this need to be enclosed in brackets?
 
     return new User(
       {
