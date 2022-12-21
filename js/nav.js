@@ -37,16 +37,30 @@ function updateNavOnLogin() {
 
 /** Show story submission on click of 'Submit' button **/
 function showSubmit() {
-  $('#submission-form').toggleClass('hidden');
+  $('#submission-form').show();
+  $favStoriesList.hide();
+  $allStoriesList.hide();
+  $userStoriesList.hide()
 }
 
 $('#nav-submit').on('click', showSubmit);
 
 /** Show/hide favorite stories on click of 'Favorites' button */
 function showFavorites() {
-
-  $favStoriesList.toggleClass('hidden');
-  $allStoriesList.toggleClass('hidden');
+  $favStoriesList.show();
+  $allStoriesList.hide();
+  $userStoriesList.hide();
+  $('#submission-form').hide();
 }
 
 $('#nav-favorites').on('click', showFavorites);
+
+/** Show/hide user stories on click of 'My Stories' button */
+function showUserStories() {
+  $favStoriesList.hide();
+  $allStoriesList.hide();
+  $userStoriesList.show();
+  $('#submission-form').hide();
+}
+
+$('#nav-user-stories').on('click', showUserStories);
