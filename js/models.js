@@ -208,4 +208,38 @@ class User {
       return null;
     }
   }
+
+  /** Function to add favorite story to API and favorites list **/
+  async addFavorite(story) {
+    await axios({
+      method: 'POST',
+      url: `${BASE_URL}/users/${this.username}/favorites/${story.storyId}`,
+      data: {
+        token: this.loginToken
+      }
+    });
+    this.favorites.push(story)
+  };
+
+  /** Function to add favorite story to API and favorites list **/
+  async delFavorite(storyId) {
+    await axios({
+      method: 'DELETE',
+      url: `${BASE_URL}/users/${this.username}/favorites/${storyId}`,
+      data: {
+        token: this.loginToken
+      }
+    });
+    this.favorites = this.favorites.filter((story) => {
+      return story.storyId !== storyId
+    });
+  };
+
+  /** Function to check if story is a favorite or not **/
+  isFavorite(storyId) {
+    let favoritesArr = this.favorites;
+    return favoritesArr.some((favObj) => {
+      return favObj.storyId === storyId;
+    });
+  }
 }

@@ -35,9 +35,18 @@ function updateNavOnLogin() {
   $navUserProfile.text(`${currentUser.username}`).show();
 }
 
-/** Show story submission on click of 'submit' button **/
+/** Show story submission on click of 'Submit' button **/
 function showSubmit() {
   $('#submission-form').toggleClass('hidden');
 }
 
 $('#nav-submit').on('click', showSubmit);
+
+/** Show/hide favorite stories on click of 'Favorites' button */
+function showFavorites() {
+
+  $favStoriesList.toggleClass('hidden');
+  $allStoriesList.toggleClass('hidden');
+}
+
+$('#nav-favorites').on('click', showFavorites);
