@@ -25,7 +25,7 @@ class Story {
 
   getHostName() {
     // UNIMPLEMENTED: complete this function!
-    return "hostname.com";
+    return `${this.url}`;
   }
 }
 
@@ -73,8 +73,24 @@ class StoryList {
    * Returns the new Story instance
    */
 
-  async addStory( /* user, newStory */) {
-    // UNIMPLEMENTED: complete this function!
+  async addStory(user, newStory) {
+    let res = await axios({
+      method: "POST",
+      url: `${BASE_URL}/stories`,
+      data: {
+        token: user.loginToken,
+        story: {
+          title: newStory.title,
+          author: newStory.author,
+          url: newStory.url
+        }
+      },
+    }
+    );
+    let storyInst = new Story(res.data.story);
+    this.stories.unshift(storyInst);
+    user.ownStories.unshift(storyInst);
+    return storyInst;
   }
 }
 
@@ -90,13 +106,13 @@ class User {
    */
 
   constructor({
-                username,
-                name,
-                createdAt,
-                favorites = [],
-                ownStories = []
-              },
-              token) {
+    username,
+    name,
+    createdAt,
+    favorites = [],
+    ownStories = []
+  },
+    token) {
     this.username = username;
     this.name = name;
     this.createdAt = createdAt;
@@ -150,7 +166,7 @@ class User {
       data: { user: { username, password } },
     });
 
-    let { user } = response.data;
+    let { user } = response.data; // does this need to be enclosed in brackets?
 
     return new User(
       {
@@ -193,4 +209,66 @@ class User {
       return null;
     }
   }
+
+  /** Function to add favorite story to API and favorites list **/
+  async addFavorite(story) {
+    await axios({
+      method: 'POST',
+      url: `${BASE_URL}/users/${this.username}/favorites/${story.storyId}`,
+      data: {
+        token: this.loginToken
+      }
+    });
+    this.favorites.push(story)
+  };
+
+  /** Function to add favorite story to API and favorites list **/
+  async delFavorite(storyId) {
+    await axios({
+      method: 'DELETE',
+      url: `${BASE_URL}/users/${this.username}/favorites/${storyId}`,
+      data: {
+        token: this.loginToken
+      }
+    });
+    this.favorites = this.favorites.filter((story) => {
+      return story.storyId !== storyId
+    });
+  };
+
+  /** Function to check if story is a favorite or not **/
+  isFavorite(storyId) {
+    let favoritesArr = this.favorites;
+    return favoritesArr.some((favObj) => {
+      return favObj.storyId === storyId;
+    });
+  };
+
+  /** Function to delete user stories **/
+  async delStory(storyId) {
+    await axios({
+      method: "DELETE",
+      url: `${BASE_URL}/stories/${storyId}`,
+      data: {
+        token: this.loginToken
+      }
+    });
+    this.ownStories = this.ownStories.filter((story) => {
+      return story.storyId !== storyId
+    });
+    this.favorites = this.favorites.filter((story) => {
+      return story.storyId !== storyId
+    });
+    storyList.stories = storyList.stories.filter((story) => {
+      return story.storyId !== storyId
+    });
+  };
+
+  /** Function to check if story is by user or not **/
+  isOwnStory(storyId) {
+    let ownStoriesArr = this.ownStories;
+    return ownStoriesArr.some((ownObj) => {
+      return ownObj.storyId === storyId;
+    });
+  };
 }

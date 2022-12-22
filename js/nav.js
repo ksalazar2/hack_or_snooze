@@ -34,3 +34,33 @@ function updateNavOnLogin() {
   $navLogOut.show();
   $navUserProfile.text(`${currentUser.username}`).show();
 }
+
+/** Show story submission on click of 'Submit' button **/
+function showSubmit() {
+  $('#submission-form').show();
+  $favStoriesList.hide();
+  $allStoriesList.hide();
+  $userStoriesList.hide()
+}
+
+$('#nav-submit').on('click', showSubmit);
+
+/** Show/hide favorite stories on click of 'Favorites' button */
+function showFavorites() {
+  $favStoriesList.show();
+  $allStoriesList.hide();
+  $userStoriesList.hide();
+  $('#submission-form').hide();
+}
+
+$('#nav-favorites').on('click', showFavorites);
+
+/** Show/hide user stories on click of 'My Stories' button */
+function showUserStories() {
+  $favStoriesList.hide();
+  $allStoriesList.hide();
+  $userStoriesList.show();
+  $('#submission-form').hide();
+}
+
+$('#nav-user-stories').on('click', showUserStories);
